@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 校园互助平台</title>
+    <link rel="stylesheet" href="../src/assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/button-fix.css">
+    <style>
+        /* 商品详情页样式*/
+        .detail-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .product-content {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .product-images {
+            flex: 0 0 50%;
+        }
+
+        .main-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-thumbnails {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            object-fit: cover;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            opacity: 1;
+            border: 2px solid #3498db;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 28px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .original-price {
+            font-size: 18px;
+            color: #777;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+
+        .product-meta {
+            margin: 20px 0;
+        }
+
+        .meta-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .product-description {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .buy-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .contact-btn {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .favorite-btn {
+            background-color: #f1f1f1;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .favorite-btn.active {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .seller-info {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .seller-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .seller-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .related-products {
+            margin-top: 40px;
+        }
+
+        .related-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .related-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .related-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .related-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .related-info {
+            padding: 10px;
+        }
+
+        .related-title {
+            font-size: 14px;
+            margin: 0 0 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .related-price {
+            font-size: 16px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* 消息表单 */
+        .message-form {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+        }
+
+        .send-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .product-content {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+
+            .action-btn {
+                flex: 1 0 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏-->
+        <nav class="navbar">
+            <div class="nav-brand">校园互助平台</div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="market.html" class="active">二手市场</a>
+                <a href="express.html">快递代领</a>
+                <a href="profile.html">个人中心</a>
+            </div>
+        </nav>
+
+        <!-- 商品详情内容 -->
+        <div class="detail-container">
+            <div class="detail-header">
+                <button class="back-btn" id="backBtn">返回列表</button>
+            </div>
+
+            <div class="product-content">
+                <div class="product-images">
+                    <img src="https://via.placeholder.com/500x400" alt="商品主图" class="main-image" id="mainImage">
+                    <div class="image-thumbnails">
+                        <img src="https://via.placeholder.com/500x400" alt="缩略图" class="thumbnail active" data-src="https://via.placeholder.com/500x400">
+                        <img src="https://via.placeholder.com/500x400?text=Image+2" alt="缩略图" class="thumbnail" data-src="https://via.placeholder.com/500x400?text=Image+2">
+                        <img src="https://via.placeholder.com/500x400?text=Image+3" alt="缩略图" class="thumbnail" data-src="https://via.placeholder.com/500x400?text=Image+3">
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <h1 class="product-title" id="productTitle">9成新计算机网络教材</h1>
+                    <div class="product-price">
+                        ¥ <span id="productPrice">25.00</span>
+                        <span class="original-price">¥ 50.00</span>
+                    </div>
+
+                    <div class="product-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">商品成色:</span>
+                            <span id="productCondition">9成新</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">发布时间:</span>
+                            <span id="publishTime">2023-06-01 10:30</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">浏览次数:</span>
+                            <span id="viewCount">32</span>
+                        </div>
+                    </div>
+
+                    <div class="product-description">
+                        <h3>商品描述</h3>
+                        <p id="productDescription">
+                            全新正版教材，适用于计算机网络课程，仅翻阅过几次，几乎全新。内页干净无笔记，无缺页。原价50元，现在半价出售。校内当面交易，方便快捷。有需要的同学请联系我。
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn buy-btn" id="buyBtn">立即购买</button>
+                        <button class="action-btn contact-btn" id="contactBtn">联系卖家</button>
+                        <button class="action-btn favorite-btn" id="favoriteBtn">收藏</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seller-info">
+                <div class="seller-header">
+                    <div class="seller-avatar">👤</div>
+                    <div>
+                        <div class="seller-name" id="sellerName">张同学</div>
+                        <div>发布商品<span id="sellerProductCount">5</span> 件商品</div>
+                    </div>
+                </div>
+                <p>校内交易，当面验货付款。不议价，请看清商品描述再联系。</p>
+            </div>
+
+            <div class="message-form">
+                <h3>留言咨询</h3>
+                <textarea class="message-input" placeholder="对这个商品有什么疑问？在这里留言给卖家..."></textarea>
+                <button class="send-btn" id="sendMessageBtn">发送留言</button>
+            </div>
+
+            <div class="related-products">
+                <h2 class="related-title">相关商品推荐</h2>
+                <div class="related-grid">
+                    <div class="related-card" data-id="101">
+                        <img src="https://via.placeholder.com/180x120" alt="相关商品1" class="related-image">
+                        <div class="related-info">
+                            <h3 class="related-title">数据结构教材</h3>
+                            <div class="related-price">¥ 30.00</div>
+                        </div>
+                    </div>
+                    <div class="related-card" data-id="102">
+                        <img src="https://via.placeholder.com/180x120" alt="相关商品2" class="related-image">
+                        <div class="related-info">
+                            <h3 class="related-title">计算机组成原理</h3>
+                            <div class="related-price">¥ 28.00</div>
+                        </div>
+                    </div>
+                    <div class="related-card" data-id="103">
+                        <img src="https://via.placeholder.com/180x120" alt="相关商品3" class="related-image">
+                        <div class="related-info">
+                            <h3 class="related-title">操作系统概念</h3>
+                            <div class="related-price">¥ 35.00</div>
+                        </div>
+                    </div>
+                    <div class="related-card" data-id="104">
+                        <img src="https://via.placeholder.com/180x120" alt="相关商品4" class="related-image">
+                        <div class="related-info">
+                            <h3 class="related-title">软件工程导论</h3>
+                            <div class="related-price">¥ 20.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 消息提示 -->
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <script>
+        // 获取URL参数
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 显示消息提示
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 切换商品图片
+        document.querySelectorAll('.thumbnail').forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                // 更新选中状态
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 更新主图
+                const mainImage = document.getElementById('mainImage');
+                mainImage.src = this.getAttribute('data-src');
+            });
+        });
+
+        // 返回按钮点击事件
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // 收藏按钮点击事件
+        let isFavorite = false;
+        document.getElementById('favoriteBtn').addEventListener('click', function() {
+            if (!checkAuth()) return;
+            
+            isFavorite = !isFavorite;
+            if (isFavorite) {
+                this.classList.add('active');
+                this.textContent = '已收藏';
+                showMessage('收藏成功', 'success');
+                
+                // 保存收藏状态
+                const productId = getUrlParameter('id') || '1';
+                addToFavorites(productId);
+            } else {
+                this.classList.remove('active');
+                this.textContent = '收藏';
+                showMessage('已取消收藏', 'info');
+                
+                // 移除收藏
+                const productId = getUrlParameter('id') || '1';
+                removeFromFavorites(productId);
+            }
+        });
+
+        // 添加到收藏
+        function addToFavorites(productId) {
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            if (!favorites.includes(productId)) {
+                favorites.push(productId);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+        }
+
+        // 从收藏中移除
+        function removeFromFavorites(productId) {
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const index = favorites.indexOf(productId);
+            if (index !== -1) {
+                favorites.splice(index, 1);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+        }
+
+        // 立即购买按钮点击事件
+        document.getElementById('buyBtn').addEventListener('click', function() {
+            if (!checkAuth()) return;
+            
+            const productId = getUrlParameter('id') || '1';
+            showMessage('正在准备购买...', 'info');
+            
+            // 实际项目中，应该跳转到下单页面或发起购买请求
+            setTimeout(() => {
+                alert('此功能尚未实现，实际项目中应跳转到下单页面');
+            }, 1000);
+        });
+
+        // 联系卖家按钮点击事件
+        document.getElementById('contactBtn').addEventListener('click', function() {
+            if (!checkAuth()) return;
+            
+            // 滚动到留言区域
+            const messageForm = document.querySelector('.message-form');
+            messageForm.scrollIntoView({ behavior: 'smooth' });
+            
+            // 聚焦到输入框
+            const messageInput = document.querySelector('.message-input');
+            messageInput.focus();
+        });
+
+        // 发送留言按钮点击事件
+        document.getElementById('sendMessageBtn').addEventListener('click', function() {
+            if (!checkAuth()) return;
+            
+            const messageInput = document.querySelector('.message-input');
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                showMessage('请输入留言内容', 'warning');
+                return;
+            }
+            
+            // 发送留言
+            showMessage('留言发送成功，等待卖家回复', 'success');
+            messageInput.value = '';
+            
+            // 实际项目中，应该调用API发送留言
+        });
+
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showMessage('请先登录', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        // 相关商品点击事件
+        document.querySelectorAll('.related-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                window.location.href = `product-detail.html?id=${productId}`;
+            });
+        });
+
+        // 加载商品详情
+        function loadProductDetail() {
+            const productId = getUrlParameter('id') || '1';
+            console.log('加载商品ID:', productId);
+            
+            // 检查是否收藏
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            if (favorites.includes(productId)) {
+                isFavorite = true;
+                const favoriteBtn = document.getElementById('favoriteBtn');
+                favoriteBtn.classList.add('active');
+                favoriteBtn.textContent = '已收藏';
+            }
+            
+            // 记录浏览历史
+            addToBrowseHistory(productId);
+            
+            // 实际项目中，应该调用API获取商品详情
+            // 这里只是演示，使用前面定义的示例数据
+        }
+
+        // 添加到浏览历史
+        function addToBrowseHistory(productId) {
+            let history = JSON.parse(localStorage.getItem('browseHistory') || '[]');
+            
+            // 如果已存在，先移除
+            const index = history.findIndex(item => item.id === productId);
+            if (index !== -1) {
+                history.splice(index, 1);
+            }
+            
+            // 添加到历史记录
+            history.unshift({
+                id: productId,
+                time: new Date().toISOString(),
+                title: document.getElementById('productTitle').textContent,
+                price: document.getElementById('productPrice').textContent
+            });
+            
+            // 只保留最多20条历史记录
+            if (history.length > 20) {
+                history = history.slice(0, 20);
+            }
+            
+            localStorage.setItem('browseHistory', JSON.stringify(history));
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductDetail();
+        });
+    </script>
+</body>
+</html> 

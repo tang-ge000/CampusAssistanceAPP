@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布二手商品 - 校园互助平台</title>
+    <link rel="stylesheet" href="../src/assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/button-fix.css">
+    <style>
+        /* 发布商品页面样式 */
+        .publish-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .publish-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .publish-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-tip {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px dashed #ddd;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .upload-btn {
+            background-color: #f1f1f1;
+            color: #333;
+            border: 1px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .price-inputs .form-group {
+            flex: 1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .draft-btn {
+            padding: 12px 20px;
+            background-color: #f1f1f1;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .price-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        /* 消息样式 */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out forwards;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .message.info {
+            background-color: #3498db;
+        }
+        
+        .message.success {
+            background-color: #2ecc71;
+        }
+        
+        .message.warning {
+            background-color: #f39c12;
+        }
+        
+        .message.error {
+            background-color: #e74c3c;
+        }
+        
+        /* 加载指示器 */
+        .loader {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(255,255,255,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 新增系统提示样式 */
+        .system-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .system-alert strong {
+            font-weight: bold;
+        }
+        
+        .system-alert code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">校园互助平台</div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="market.html" class="active">二手市场</a>
+                <a href="express.html">快递代领</a>
+                <a href="profile.html">个人中心</a>
+            </div>
+        </nav>
+
+        <!-- 发布商品内容 -->
+        <div class="publish-container">
+            <!-- 系统提示 -->
+            <div class="system-alert" id="systemAlert">
+                <strong>后端数据库已启用</strong>
+                <p>系统现在使用MySQL数据库进行数据持久化存储：</p>
+                <ol style="margin-top: 5px; margin-bottom: 5px;">
+                    <li>请确保MySQL服务已启动（用户名: root, 密码: 123456）</li>
+                    <li>数据库名称: campus_assistance（会自动创建）</li>
+                    <li>后端服务运行在端口8080上</li>
+                </ol>
+                <p style="margin-top: 10px; font-size: 13px; color: #2980b9;">
+                    启动应用时请使用start.bat脚本，确保前后端都已启动
+                </p>
+                <button onclick="this.parentElement.style.display='none'" style="float:right; background:none; border:none; cursor:pointer;">✕</button>
+            </div>
+            
+            <div class="publish-header">
+                <h1 class="form-title">发布二手商品</h1>
+                <button class="back-btn" id="backBtn">← 返回</button>
+            </div>
+
+            <form class="publish-form" id="publishForm">
+                <div class="form-group">
+                    <label class="form-label">商品标题</label>
+                    <input type="text" class="form-input" id="productTitle" name="title" placeholder="请输入商品标题（30字以内）" maxlength="30" required>
+                    <p class="form-tip">简洁明了的标题更容易吸引买家</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">商品分类</label>
+                    <select class="form-select" id="productCategory" name="category" required>
+                        <option value="">请选择分类</option>
+                        <option value="books">教材书籍</option>
+                        <option value="electronics">电子产品</option>
+                        <option value="daily">日用百货</option>
+                        <option value="clothing">服装鞋帽</option>
+                        <option value="sports">体育器材</option>
+                        <option value="others">其他</option>
+                    </select>
+                </div>
+
+                <div class="price-inputs">
+                    <div class="form-group">
+                        <label class="form-label">售价（元）</label>
+                        <input type="number" class="form-input" id="productPrice" name="price" placeholder="请输入售价" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">原价（元，选填）</label>
+                        <input type="number" class="form-input" id="originalPrice" name="originalPrice" placeholder="请输入原价" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">商品成色</label>
+                    <select class="form-select" id="productCondition" name="condition" required>
+                        <option value="">请选择成色</option>
+                        <option value="new">全新</option>
+                        <option value="almost_new">9成新</option>
+                        <option value="slightly_used">7成新</option>
+                        <option value="used">5成新及以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">商品图片</label>
+                    <p class="form-tip">最多上传5张图片，第一张将作为主图</p>
+                    <div class="image-preview" id="imagePreview">
+                        <div class="upload-btn" id="uploadBtn">
+                            <span>+ 添加图片</span>
+                            <input type="file" id="imageUpload" style="display:none;" accept="image/*" multiple>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">商品描述</label>
+                    <textarea class="form-textarea" id="productDescription" name="description" placeholder="请详细描述商品的使用情况、配件信息、取货方式等" required></textarea>
+                    <p class="form-tip">详细的描述可以减少不必要的沟通，提高交易效率</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">交易方式</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="tradeMethod" value="face" checked> 当面交易
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="tradeMethod" value="delivery"> 校内送货
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">联系方式</label>
+                    <input type="text" class="form-input" id="contactInfo" name="contactInfo" placeholder="微信号/QQ/手机号（选填，不填则默认站内消息联系）">
+                    <p class="form-tip">提供联系方式可以让有意向的买家更快联系到你</p>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">发布商品</button>
+                    <button type="button" class="draft-btn" id="saveDraftBtn">保存草稿</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="message" class="message"></div>
+
+    <!-- 加载指示器 -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <script>
+        // 显示消息提示
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 显示/隐藏加载指示器
+        function toggleLoader(show) {
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
+        }
+
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showMessage('请先登录', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+            
+            // 加载草稿
+            loadDraft();
+            
+            // 绑定返回按钮事件
+            document.getElementById('backBtn').addEventListener('click', function() {
+                if (confirm('确定返回吗？未保存的内容将丢失')) {
+                    window.history.back();
+                }
+            });
+            
+            // 绑定图片上传按钮事件
+            document.getElementById('uploadBtn').addEventListener('click', function() {
+                document.getElementById('imageUpload').click();
+            });
+            
+            // 绑定图片选择事件
+            document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
+            
+            // 绑定表单提交事件
+            document.getElementById('publishForm').addEventListener('submit', handleSubmit);
+            
+            // 绑定保存草稿按钮事件
+            document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+        });
+
+        // 处理图片上传
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            const preview = document.getElementById('imagePreview');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            // 检查图片数量限制
+            const existingImages = preview.querySelectorAll('.preview-item:not(.upload-btn)');
+            if (existingImages.length + files.length > 5) {
+                showMessage('最多只能上传5张图片', 'warning');
+                return;
+            }
+            
+            // 添加图片预览
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // 检查文件类型
+                if (!file.type.match('image.*')) {
+                    showMessage('请上传图片文件', 'warning');
+                    continue;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = '商品图片';
+                    img.dataset.file = file.name; // 保存文件名，用于后续上传识别
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.textContent = '×';
+                    removeBtn.addEventListener('click', function() {
+                        preview.removeChild(previewItem);
+                    });
+                    
+                    previewItem.appendChild(img);
+                    previewItem.appendChild(removeBtn);
+                    
+                    // 将上传按钮移到最后
+                    preview.insertBefore(previewItem, uploadBtn);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // 清空文件选择，以便可以再次选择相同的文件
+            event.target.value = '';
+        }
+
+        // 表单提交处理
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const title = document.getElementById('productTitle').value;
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            const originalPrice = document.getElementById('originalPrice').value;
+            const condition = document.getElementById('productCondition').value;
+            const description = document.getElementById('productDescription').value;
+            
+            // 验证必填字段
+            if (!title || !category || !price || !condition || !description) {
+                showMessage('请填写所有必填项', 'warning');
+                return;
+            }
+            
+            // 获取交易方式
+            const tradeMethods = [];
+            document.querySelectorAll('input[name="tradeMethod"]:checked').forEach(checkbox => {
+                tradeMethods.push(checkbox.value);
+            });
+            
+            if (tradeMethods.length === 0) {
+                showMessage('请至少选择一种交易方式', 'warning');
+                return;
+            }
+            
+            // 获取联系方式
+            const contactInfo = document.getElementById('contactInfo').value;
+            
+            // 获取图片
+            const images = [];
+            document.querySelectorAll('.preview-item:not(.upload-btn) img').forEach(img => {
+                images.push(img.src);
+            });
+            
+            if (images.length === 0) {
+                showMessage('请至少上传一张图片', 'warning');
+                return;
+            }
+            
+            // 构造商品数据
+            const productData = {
+                title,
+                category,
+                price: parseFloat(price),
+                originalPrice: originalPrice ? parseFloat(originalPrice) : null,
+                conditionLevel: condition,
+                description,
+                tradeMethods,
+                contactInfo,
+                images
+            };
+            
+            // 显示加载指示器
+            toggleLoader(true);
+            
+            try {
+                // 调用API发布商品
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:8080/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                if (!response.ok) {
+                    // 改进错误处理，先检查内容类型
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || '发布失败，请稍后重试');
+                    } else {
+                        // 处理非JSON响应
+                        const errorText = await response.text();
+                        console.error('服务器返回非JSON响应:', errorText);
+                        throw new Error(`服务器返回错误 (${response.status}): 请确保后端服务正在运行`);
+                    }
+                }
+                
+                const result = await response.json();
+                
+                // 清除草稿
+                localStorage.removeItem('productDraft');
+                
+                // 显示成功消息
+                showMessage('商品发布成功', 'success');
+                
+                // 跳转到商品列表页
+                setTimeout(() => {
+                    window.location.href = 'market.html';
+                }, 1500);
+            } catch (error) {
+                showMessage('发布失败: ' + (error.message || '未知错误'), 'error');
+                console.error('发布商品失败:', error);
+            } finally {
+                // 隐藏加载指示器
+                toggleLoader(false);
+            }
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            // 获取表单数据
+            const title = document.getElementById('productTitle').value;
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            const originalPrice = document.getElementById('originalPrice').value;
+            const condition = document.getElementById('productCondition').value;
+            const description = document.getElementById('productDescription').value;
+            
+            // 获取交易方式
+            const tradeMethods = [];
+            document.querySelectorAll('input[name="tradeMethod"]:checked').forEach(checkbox => {
+                tradeMethods.push(checkbox.value);
+            });
+            
+            // 获取联系方式
+            const contactInfo = document.getElementById('contactInfo').value;
+            
+            // 获取图片
+            const images = [];
+            document.querySelectorAll('.preview-item:not(.upload-btn) img').forEach(img => {
+                images.push(img.src);
+            });
+            
+            // 构造草稿数据
+            const draftData = {
+                title,
+                category,
+                price,
+                originalPrice,
+                condition,
+                description,
+                tradeMethods,
+                contactInfo,
+                images,
+                lastModified: new Date().toISOString()
+            };
+            
+            // 保存到本地存储
+            localStorage.setItem('productDraft', JSON.stringify(draftData));
+            
+            showMessage('草稿已保存', 'success');
+        }
+
+        // 加载草稿
+        function loadDraft() {
+            const draftJson = localStorage.getItem('productDraft');
+            if (!draftJson) return;
+            
+            try {
+                const draft = JSON.parse(draftJson);
+                
+                // 填充表单数据
+                document.getElementById('productTitle').value = draft.title || '';
+                document.getElementById('productCategory').value = draft.category || '';
+                document.getElementById('productPrice').value = draft.price || '';
+                document.getElementById('originalPrice').value = draft.originalPrice || '';
+                document.getElementById('productCondition').value = draft.condition || '';
+                document.getElementById('productDescription').value = draft.description || '';
+                document.getElementById('contactInfo').value = draft.contactInfo || '';
+                
+                // 设置交易方式
+                document.querySelectorAll('input[name="tradeMethod"]').forEach(checkbox => {
+                    checkbox.checked = draft.tradeMethods && draft.tradeMethods.includes(checkbox.value);
+                });
+                
+                // 加载图片预览
+                const preview = document.getElementById('imagePreview');
+                const uploadBtn = document.getElementById('uploadBtn');
+                
+                if (draft.images && draft.images.length > 0) {
+                    draft.images.forEach(imgSrc => {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'preview-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = imgSrc;
+                        img.alt = '商品图片';
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.textContent = '×';
+                        removeBtn.addEventListener('click', function() {
+                            preview.removeChild(previewItem);
+                        });
+                        
+                        previewItem.appendChild(img);
+                        previewItem.appendChild(removeBtn);
+                        
+                        // 将上传按钮移到最后
+                        preview.insertBefore(previewItem, uploadBtn);
+                    });
+                }
+                
+                showMessage('已加载上次的草稿', 'info');
+            } catch (error) {
+                console.error('加载草稿失败:', error);
+            }
+        }
+
+        // 获取当前用户ID
+        function getUserId() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) return null;
+            
+            try {
+                const user = JSON.parse(userStr);
+                return user.id || user.userId || null;
+            } catch (error) {
+                console.error('获取用户ID失败:', error);
+                return null;
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布求购信息 - 校园互助平台</title>
+    <link rel="stylesheet" href="../src/assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/button-fix.css">
+    <style>
+        /* 发布求购页面样式 */
+        .publish-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .publish-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            padding: 8px 15px;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .publish-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-tip {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        .price-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .price-inputs .form-group {
+            flex: 1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            padding: 12px 20px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .draft-btn {
+            padding: 12px 20px;
+            background-color: #f1f1f1;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* 消息样式 */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out forwards;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .message.info {
+            background-color: #3498db;
+        }
+        
+        .message.success {
+            background-color: #2ecc71;
+        }
+        
+        .message.warning {
+            background-color: #f39c12;
+        }
+        
+        .message.error {
+            background-color: #e74c3c;
+        }
+        
+        /* 加载指示器 */
+        .loader {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(255,255,255,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #f39c12;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .price-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">校园互助平台</div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="market.html" class="active">二手市场</a>
+                <a href="express.html">快递代领</a>
+                <a href="profile.html">个人中心</a>
+            </div>
+        </nav>
+
+        <!-- 发布求购内容 -->
+        <div class="publish-container">
+            <div class="publish-header">
+                <h1 class="form-title">发布求购信息</h1>
+                <button class="back-btn" id="backBtn">← 返回</button>
+            </div>
+
+            <form class="publish-form" id="publishForm">
+                <div class="form-group">
+                    <label class="form-label">求购商品名称</label>
+                    <input type="text" class="form-input" id="productTitle" name="title" placeholder="请输入您想要的商品名称（30字以内）" maxlength="30" required>
+                    <p class="form-tip">清晰明了的标题更容易得到回应</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">商品分类</label>
+                    <select class="form-select" id="productCategory" name="category" required>
+                        <option value="">请选择分类</option>
+                        <option value="books">教材书籍</option>
+                        <option value="electronics">电子产品</option>
+                        <option value="daily">日用百货</option>
+                        <option value="clothing">服装鞋帽</option>
+                        <option value="sports">体育器材</option>
+                        <option value="others">其他</option>
+                    </select>
+                </div>
+
+                <div class="price-inputs">
+                    <div class="form-group">
+                        <label class="form-label">预期价格范围（元）</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" class="form-input" id="minPrice" name="minPrice" placeholder="最低价" min="0" step="0.01" required>
+                            <span>-</span>
+                            <input type="number" class="form-input" id="maxPrice" name="maxPrice" placeholder="最高价" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">期望成色</label>
+                        <select class="form-select" id="productCondition" name="condition" required>
+                            <option value="">请选择成色</option>
+                            <option value="new">全新</option>
+                            <option value="almost_new">9成新</option>
+                            <option value="slightly_used">7成新</option>
+                            <option value="used">5成新及以上</option>
+                            <option value="any">不限</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">求购描述</label>
+                    <textarea class="form-textarea" id="productDescription" name="description" placeholder="请详细描述您想要的商品特征、型号、品牌等信息，以及您的其他要求" required></textarea>
+                    <p class="form-tip">详细的描述可以帮助卖家更准确地了解您的需求</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">紧急程度</label>
+                    <select class="form-select" id="urgencyLevel" name="urgencyLevel">
+                        <option value="normal">普通</option>
+                        <option value="urgent">急需</option>
+                        <option value="very_urgent">非常急需</option>
+                    </select>
+                    <p class="form-tip">如果您急需此商品，可以提高紧急程度</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">交易方式</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="tradeMethod" value="face" checked> 当面交易
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="tradeMethod" value="delivery"> 校内送货
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">联系方式</label>
+                    <input type="text" class="form-input" id="contactInfo" name="contactInfo" placeholder="微信号/QQ/手机号（选填，不填则默认站内消息联系）">
+                    <p class="form-tip">提供联系方式可以让有意出售的同学更快联系到您</p>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">发布求购</button>
+                    <button type="button" class="draft-btn" id="saveDraftBtn">保存草稿</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="message" class="message"></div>
+
+    <!-- 加载指示器 -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <script>
+        // 显示消息提示
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 显示/隐藏加载指示器
+        function toggleLoader(show) {
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
+        }
+
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showMessage('请先登录', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        // 验证表单
+        function validateForm() {
+            const minPrice = parseFloat(document.getElementById('minPrice').value);
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value);
+            
+            if (minPrice > maxPrice) {
+                showMessage('最低价不能高于最高价', 'warning');
+                return false;
+            }
+            
+            // 检查至少选择一种交易方式
+            const tradeMethods = document.querySelectorAll('input[name="tradeMethod"]:checked');
+            if (tradeMethods.length === 0) {
+                showMessage('请至少选择一种交易方式', 'warning');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+            
+            // 加载草稿
+            loadDraft();
+            
+            // 绑定返回按钮事件
+            document.getElementById('backBtn').addEventListener('click', function() {
+                if (confirm('确定返回吗？未保存的内容将丢失')) {
+                    window.history.back();
+                }
+            });
+            
+            // 绑定表单提交事件
+            document.getElementById('publishForm').addEventListener('submit', handleSubmit);
+            
+            // 绑定保存草稿按钮事件
+            document.getElementById('saveDraftBtn').addEventListener('click', saveDraft);
+        });
+
+        // 表单提交处理
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) return;
+            
+            // 获取表单数据
+            const title = document.getElementById('productTitle').value;
+            const category = document.getElementById('productCategory').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const condition = document.getElementById('productCondition').value;
+            const description = document.getElementById('productDescription').value;
+            const urgencyLevel = document.getElementById('urgencyLevel').value;
+            
+            // 获取交易方式
+            const tradeMethods = [];
+            document.querySelectorAll('input[name="tradeMethod"]:checked').forEach(checkbox => {
+                tradeMethods.push(checkbox.value);
+            });
+            
+            // 获取联系方式
+            const contactInfo = document.getElementById('contactInfo').value;
+            
+            // 构造求购数据
+            const wantedData = {
+                title,
+                category,
+                minPrice: parseFloat(minPrice),
+                maxPrice: parseFloat(maxPrice),
+                conditionLevel: condition,
+                description,
+                urgencyLevel,
+                tradeMethods,
+                contactInfo,
+                type: 'WANTED'
+            };
+            
+            // 显示加载指示器
+            toggleLoader(true);
+            
+            try {
+                // 调用API发布求购
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/products/wanted', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(wantedData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '发布失败，请稍后重试');
+                }
+                
+                const result = await response.json();
+                
+                // 清除草稿
+                localStorage.removeItem('wantedProductDraft');
+                
+                // 显示成功消息
+                showMessage('求购信息发布成功', 'success');
+                
+                // 跳转到求购列表页
+                setTimeout(() => {
+                    window.location.href = 'market.html?tab=wanted';
+                }, 1500);
+            } catch (error) {
+                showMessage(error.message || '发布失败，请稍后重试', 'error');
+                console.error('发布求购失败:', error);
+            } finally {
+                // 隐藏加载指示器
+                toggleLoader(false);
+            }
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            // 获取表单数据
+            const title = document.getElementById('productTitle').value;
+            const category = document.getElementById('productCategory').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const condition = document.getElementById('productCondition').value;
+            const description = document.getElementById('productDescription').value;
+            const urgencyLevel = document.getElementById('urgencyLevel').value;
+            
+            // 获取交易方式
+            const tradeMethods = [];
+            document.querySelectorAll('input[name="tradeMethod"]:checked').forEach(checkbox => {
+                tradeMethods.push(checkbox.value);
+            });
+            
+            // 获取联系方式
+            const contactInfo = document.getElementById('contactInfo').value;
+            
+            // 构造草稿数据
+            const draftData = {
+                title,
+                category,
+                minPrice,
+                maxPrice,
+                condition,
+                description,
+                urgencyLevel,
+                tradeMethods,
+                contactInfo,
+                lastModified: new Date().toISOString()
+            };
+            
+            // 保存到本地存储
+            localStorage.setItem('wantedProductDraft', JSON.stringify(draftData));
+            
+            showMessage('草稿已保存', 'success');
+        }
+
+        // 加载草稿
+        function loadDraft() {
+            const draftJson = localStorage.getItem('wantedProductDraft');
+            if (!draftJson) return;
+            
+            try {
+                const draft = JSON.parse(draftJson);
+                
+                // 填充表单数据
+                document.getElementById('productTitle').value = draft.title || '';
+                document.getElementById('productCategory').value = draft.category || '';
+                document.getElementById('minPrice').value = draft.minPrice || '';
+                document.getElementById('maxPrice').value = draft.maxPrice || '';
+                document.getElementById('productCondition').value = draft.condition || '';
+                document.getElementById('productDescription').value = draft.description || '';
+                document.getElementById('urgencyLevel').value = draft.urgencyLevel || 'normal';
+                document.getElementById('contactInfo').value = draft.contactInfo || '';
+                
+                // 设置交易方式
+                document.querySelectorAll('input[name="tradeMethod"]').forEach(checkbox => {
+                    checkbox.checked = draft.tradeMethods && draft.tradeMethods.includes(checkbox.value);
+                });
+                
+                showMessage('已加载上次的草稿', 'info');
+            } catch (error) {
+                console.error('加载草稿失败:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

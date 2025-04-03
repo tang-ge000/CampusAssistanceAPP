@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 校园互助平台</title>
+    <link rel="stylesheet" href="../src/assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/profile.css">
+    <link rel="stylesheet" href="../src/assets/css/button-fix.css">
+    <style>
+        /* 个人中心样式 */
+        .profile-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-right: 20px;
+            position: relative;
+        }
+        
+        .change-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-info {
+            flex-grow: 1;
+        }
+        
+        .user-info h1 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .user-info p {
+            margin: 0;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-item .count {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .sidebar {
+            width: 200px;
+            border-right: 1px solid #eee;
+            padding-right: 20px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #f5f5f5;
+            color: #3498db;
+        }
+        
+        .content-area {
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .item-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+            transition: all 0.3s;
+        }
+        
+        .item:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+        
+        .item h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .item p {
+            margin: 0;
+            color: #666;
+        }
+        
+        .item .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .filter-bar select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .back-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 添加数据库更新成功提示样式 */
+        .db-update-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            float: right;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        
+        /* 消息样式 */
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .message.info {
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+        
+        .message.success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        
+        .message.warning {
+            background-color: #fcf8e3;
+            color: #8a6d3b;
+        }
+        
+        .message.error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        
+        /* 快速链接样式 */
+        .quick-links {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .quick-link-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s;
+            padding: 10px;
+            border-radius: 8px;
+            width: 22%;
+        }
+        
+        .quick-link-item:hover {
+            transform: translateY(-5px);
+            background-color: #f5f5f5;
+        }
+        
+        .quick-link-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .quick-link-text {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 消息提示元素 -->
+    <div id="message" class="message" style="display: none;"></div>
+    
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="avatar">
+                👤
+                <button class="change-avatar">📷</button>
+            </div>
+            <div class="user-info">
+                <h1 id="username">用户名</h1>
+                <p id="student-id">学号：</p>
+                <p id="email">邮箱：</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" id="logoutBtn">退出登录</button>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="count" id="help-count">0</div>
+                <div class="label">我的互助</div>
+            </div>
+            <div class="stat-item">
+                <div class="count" id="task-count">0</div>
+                <div class="label">我的任务</div>
+            </div>
+            <div class="stat-item">
+                <div class="count" id="goods-count">0</div>
+                <div class="label">二手商品</div>
+            </div>
+            <div class="stat-item">
+                <div class="count" id="likes-count">0</div>
+                <div class="label">获赞数</div>
+            </div>
+        </div>
+        
+        <!-- 添加二手市场快速入口 -->
+        <div class="quick-links">
+            <a href="market.html" class="quick-link-item">
+                <div class="quick-link-icon">🛒</div>
+                <div class="quick-link-text">二手市场</div>
+            </a>
+            <a href="publish-product.html" class="quick-link-item">
+                <div class="quick-link-icon">📦</div>
+                <div class="quick-link-text">发布商品</div>
+            </a>
+            <a href="wanted-product.html" class="quick-link-item">
+                <div class="quick-link-icon">🔍</div>
+                <div class="quick-link-text">发布求购</div>
+            </a>
+            <a href="my-products.html" class="quick-link-item">
+                <div class="quick-link-icon">📋</div>
+                <div class="quick-link-text">我的商品</div>
+            </a>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <ul>
+                    <li><a href="#account" class="active" data-section="account">账号管理</a></li>
+                    <li><a href="#messages" data-section="messages">我的消息</a></li>
+                    <li><a href="#history" data-section="history">历史浏览</a></li>
+                    <li><a href="#drafts" data-section="drafts">草稿箱</a></li>
+                    <li><a href="#favorites" data-section="favorites">我的收藏</a></li>
+                    <li><a href="#purchased" data-section="purchased">我买到的</a></li>
+                    <li><a href="#wanted" data-section="wanted">我想要的</a></li>
+                    <li><a href="#published" data-section="published">我发布的</a></li>
+                    <li><a href="#sold" data-section="sold">我卖出的</a></li>
+                    <li><a href="#orders" data-section="orders">我的订单</a></li>
+                </ul>
+            </div>
+            
+            <div class="content-area">
+                <!-- 账号管理 -->
+                <div id="account-section" class="content-section active">
+                    <h2>账号管理</h2>
+                    <form id="accountForm">
+                        <div class="form-group">
+                            <label for="update-username">用户名</label>
+                            <input type="text" id="update-username" name="username" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="update-email">邮箱</label>
+                            <input type="email" id="update-email" name="email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="current-password">当前密码</label>
+                            <input type="password" id="current-password" name="currentPassword" class="form-control" placeholder="验证身份">
+                        </div>
+                        <div class="form-group">
+                            <label for="update-password">新密码</label>
+                            <input type="password" id="update-password" name="password" class="form-control" placeholder="留空表示不修改">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">确认密码</label>
+                            <input type="password" id="confirm-password" name="confirmPassword" class="form-control" placeholder="再次输入新密码">
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存修改</button>
+                    </form>
+                </div>
+                
+                <!-- 我的消息 -->
+                <div id="messages-section" class="content-section">
+                    <h2>我的消息</h2>
+                    <div class="item-list" id="message-list">
+                        <div class="item">
+                            <h3>系统通知</h3>
+                            <p>欢迎使用校园互助平台！</p>
+                            <div class="meta">
+                                <span>2023-06-01 10:30</span>
+                                <span>未读</span>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>来自用户：张三</h3>
+                            <p>请问这个商品还在吗？</p>
+                            <div class="meta">
+                                <span>2023-06-02 14:20</span>
+                                <span>已读</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 历史浏览 -->
+                <div id="history-section" class="content-section">
+                    <h2>历史浏览</h2>
+                    <div class="filter-bar">
+                        <select id="history-filter">
+                            <option value="all">全部</option>
+                            <option value="today">今天</option>
+                            <option value="week">本周</option>
+                            <option value="month">本月</option>
+                        </select>
+                        <button class="btn btn-primary" id="clear-history">清空历史记录</button>
+                    </div>
+                    <div class="item-list" id="history-list">
+                        <div class="item">
+                            <h3>二手自行车</h3>
+                            <p>价格：￥200</p>
+                            <div class="meta">
+                                <span>浏览时间：2023-06-01 10:30</span>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>快递代领</h3>
+                            <p>报酬：￥5</p>
+                            <div class="meta">
+                                <span>浏览时间：2023-06-02 14:20</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 草稿箱 -->
+                <div id="drafts-section" class="content-section">
+                    <h2>草稿箱</h2>
+                    <div class="item-list" id="drafts-list">
+                        <div class="item">
+                            <h3>二手课本出售（草稿）</h3>
+                            <p>价格：￥30</p>
+                            <div class="meta">
+                                <span>保存时间：2023-06-01 10:30</span>
+                                <div>
+                                    <button class="btn btn-primary edit-draft">编辑</button>
+                                    <button class="btn btn-primary delete-draft">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>快递代领（草稿）</h3>
+                            <p>报酬：￥5</p>
+                            <div class="meta">
+                                <span>保存时间：2023-06-02 14:20</span>
+                                <div>
+                                    <button class="btn btn-primary edit-draft">编辑</button>
+                                    <button class="btn btn-primary delete-draft">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的收藏 -->
+                <div id="favorites-section" class="content-section">
+                    <h2>我的收藏</h2>
+                    <div class="item-list" id="favorites-list">
+                        <div class="item">
+                            <h3>二手笔记本电脑</h3>
+                            <p>价格：￥2000</p>
+                            <div class="meta">
+                                <span>收藏时间：2023-06-01 10:30</span>
+                                <button class="btn btn-primary delete-favorite">取消收藏</button>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>快递代领</h3>
+                            <p>报酬：￥8</p>
+                            <div class="meta">
+                                <span>收藏时间：2023-06-02 14:20</span>
+                                <button class="btn btn-primary delete-favorite">取消收藏</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我买到的 -->
+                <div id="purchased-section" class="content-section">
+                    <h2>我买到的</h2>
+                    <div class="item-list" id="purchased-list">
+                        <div class="item">
+                            <h3>二手教材</h3>
+                            <p>价格：￥25</p>
+                            <div class="meta">
+                                <span>购买时间：2023-06-01 10:30</span>
+                                <span>卖家：李四</span>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>计算器</h3>
+                            <p>价格：￥50</p>
+                            <div class="meta">
+                                <span>购买时间：2023-06-02 14:20</span>
+                                <span>卖家：王五</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我想要的 -->
+                <div id="wanted-section" class="content-section">
+                    <h2>我想要的</h2>
+                    <div class="item-list" id="wanted-list">
+                        <div class="item">
+                            <h3>二手自行车</h3>
+                            <p>预算：￥200</p>
+                            <div class="meta">
+                                <span>发布时间：2023-06-01 10:30</span>
+                                <div>
+                                    <button class="btn btn-primary edit-wanted">编辑</button>
+                                    <button class="btn btn-primary delete-wanted">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>英语教材</h3>
+                            <p>预算：￥30</p>
+                            <div class="meta">
+                                <span>发布时间：2023-06-02 14:20</span>
+                                <div>
+                                    <button class="btn btn-primary edit-wanted">编辑</button>
+                                    <button class="btn btn-primary delete-wanted">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我发布的 -->
+                <div id="published-section" class="content-section">
+                    <h2>我发布的</h2>
+                    <div class="filter-bar">
+                        <select id="published-filter">
+                            <option value="all">全部</option>
+                            <option value="products">商品</option>
+                            <option value="wanted">求购</option>
+                            <option value="express">快递代领</option>
+                        </select>
+                        <a href="my-products.html" class="btn btn-primary">管理我的商品</a>
+                    </div>
+                    <div class="item-list" id="published-list">
+                        <div class="item">
+                            <h3>二手教材</h3>
+                            <p>价格：￥45</p>
+                            <div class="meta">
+                                <span>发布时间：2023-06-01 10:30</span>
+                                <span>状态：在售</span>
+                                <div>
+                                    <button class="btn btn-primary edit-published">编辑</button>
+                                    <button class="btn btn-primary delete-published">下架</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>自行车</h3>
+                            <p>价格：￥350</p>
+                            <div class="meta">
+                                <span>发布时间：2023-06-02 14:20</span>
+                                <span>状态：在售</span>
+                                <div>
+                                    <button class="btn btn-primary edit-published">编辑</button>
+                                    <button class="btn btn-primary delete-published">下架</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我卖出的 -->
+                <div id="sold-section" class="content-section">
+                    <h2>我卖出的</h2>
+                    <div class="item-list" id="sold-list">
+                        <div class="item">
+                            <h3>数学教材</h3>
+                            <p>价格：￥35</p>
+                            <div class="meta">
+                                <span>售出时间：2023-06-01 10:30</span>
+                                <span>买家：张三</span>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>USB闪存盘</h3>
+                            <p>价格：￥60</p>
+                            <div class="meta">
+                                <span>售出时间：2023-06-02 14:20</span>
+                                <span>买家：李四</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的订单 -->
+                <div id="orders-section" class="content-section">
+                    <h2>我的订单</h2>
+                    <div class="filter-bar">
+                        <select id="orders-filter">
+                            <option value="all">全部</option>
+                            <option value="pending">待处理</option>
+                            <option value="processing">处理中</option>
+                            <option value="completed">已完成</option>
+                            <option value="cancelled">已取消</option>
+                        </select>
+                    </div>
+                    <div class="item-list" id="orders-list">
+                        <div class="item">
+                            <h3>订单 #12345</h3>
+                            <p>商品：二手教材</p>
+                            <p>价格：￥25</p>
+                            <div class="meta">
+                                <span>订单时间：2023-06-01 10:30</span>
+                                <span>状态：已完成</span>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <h3>订单 #12346</h3>
+                            <p>商品：计算器</p>
+                            <p>价格：￥50</p>
+                            <div class="meta">
+                                <span>订单时间：2023-06-02 14:20</span>
+                                <span>状态：处理中</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="../index.html" class="back-button">返回首页</a>
+    </div>
+    
+    <div id="dbUpdateSuccess" class="db-update-success">
+        数据更新成功！<button class="close-btn" onclick="hideUpdateSuccess()">×</button>
+    </div>
+    
+    <script src="../src/assets/js/profile.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 处理侧边栏导航
+        const navLinks = document.querySelectorAll('.sidebar a');
+        const contentSections = document.querySelectorAll('.content-section');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 移除所有活动类
+                navLinks.forEach(link => link.classList.remove('active'));
+                contentSections.forEach(section => section.classList.remove('active'));
+                
+                // 添加活动类到点击的链接
+                this.classList.add('active');
+                
+                // 显示相应的内容区域
+                const sectionId = this.getAttribute('data-section') + '-section';
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+    });
+    </script>
+</body>
+</html> 

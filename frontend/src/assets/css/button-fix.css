@@ -1,0 +1,53 @@
+/* 全局防止按钮文字被选中 */
+button, .btn, .action-button, .card-btn, .submit-btn, .draft-btn,
+.filter-option, .sort-option, .tab, .product-card, .action-buttons a,
+.pagination-item, .quick-link-item, .navbar a, .back-btn,
+.image-thumbnails img, .related-card {
+    user-select: none; /* 禁止文本选择 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+}
+
+/* 确保内部元素不拦截点击事件 */
+button *, .btn *, .action-button *, .card-btn *, .product-card *,
+.filter-option *, .sort-option *, .tab *, .pagination-item *,
+.quick-link-item *, .navbar a *, .back-btn * {
+    pointer-events: none; /* 点击事件穿透到父元素 */
+}
+
+/* 添加轻微的视觉反馈，提升用户体验 */
+button:active, .btn:active, .action-button:active,
+.card-btn:active, .filter-option:active, .tab:active,
+.quick-link-item:active, .navbar a:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+}
+
+/* 修复特定类型的按钮问题 */
+.favorite-btn, .buy-btn, .contact-btn, .send-btn, 
+.publish-btn, .want-btn, .edit-btn, .delete-btn {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* 触摸设备优化 */
+@media (pointer: coarse) {
+    /* 增大移动设备上的点击区域 */
+    button, .btn, .action-btn, .card-btn {
+        min-height: 44px; /* 苹果推荐的最小触摸目标尺寸 */
+        padding: 12px 20px;
+    }
+    
+    /* 禁用移动设备上的悬停效果 */
+    button:hover, .btn:hover, .action-btn:hover {
+        transform: none;
+    }
+}
+
+/* 防止iOS上的按钮高亮问题 */
+* {
+    -webkit-tap-highlight-color: transparent;
+} 

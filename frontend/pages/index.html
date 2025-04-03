@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>校园互助平台</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/style.css">
+    <link rel="stylesheet" href="../src/assets/css/button-fix.css">
 </head>
 <body>
     <div class="app-container">
@@ -21,28 +22,28 @@
         <main class="main-content">
             <div class="module-grid">
                 <!-- 二手市场模块 -->
-                <div class="module-card" onclick="location.href='pages/market.html'">
+                <div class="module-card" onclick="location.href='market.html'">
                     <div class="module-icon">🛍️</div>
                     <h2>二手市场</h2>
                     <p>买卖二手物品，物尽其用</p>
                 </div>
 
                 <!-- 快递代领模块 -->
-                <div class="module-card" onclick="location.href='pages/express.html'">
+                <div class="module-card" onclick="location.href='express.html'">
                     <div class="module-icon">📦</div>
                     <h2>快递代领</h2>
                     <p>代取快递，互帮互助</p>
                 </div>
 
                 <!-- 消息模块 -->
-                <div class="module-card" onclick="location.href='pages/messages.html'">
+                <div class="module-card" onclick="location.href='messages.html'">
                     <div class="module-icon">💬</div>
                     <h2>消息</h2>
                     <p>查看系统通知和私信</p>
                 </div>
 
                 <!-- 个人中心模块 -->
-                <div class="module-card" onclick="location.href='pages/profile.html'">
+                <div class="module-card" onclick="location.href='profile.html'">
                     <div class="module-icon">👤</div>
                     <h2>个人中心</h2>
                     <p>管理个人信息和订单</p>
@@ -54,7 +55,7 @@
         <div id="message" class="message" style="display: none;"></div>
     </div>
 
-    <script src="assets/js/auth.js"></script>
+    <script src="../src/assets/js/auth.js"></script>
     <script>
         // 检查登录状态
         function checkAuth() {
