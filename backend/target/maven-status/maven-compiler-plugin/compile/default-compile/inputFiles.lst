@@ -1,0 +1,15 @@
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\controller\AuthController.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\dto\RegisterRequest.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\repository\UserRepository.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\service\CustomUserDetailsService.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\dto\AuthResponse.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\dto\UserDto.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\model\UserRole.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\security\JwtAuthenticationFilter.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\service\AuthService.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\dto\LoginRequest.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\Application.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\config\SecurityConfig.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\util\PasswordGenerator.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\model\User.java
+D:\Student_zhang\大二下\软件工程基础\校园互助app\CampusAssistanceAPP\backend\src\main\java\com\campus\assistance\service\JwtService.java

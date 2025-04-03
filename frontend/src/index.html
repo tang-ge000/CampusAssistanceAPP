@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园互助平台</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">校园互助平台</div>
+            <div class="nav-links">
+                <a href="#" class="active">首页</a>
+                <a href="#" id="logoutBtn">退出登录</a>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <div class="module-grid">
+                <!-- 二手市场模块 -->
+                <div class="module-card" onclick="location.href='pages/market.html'">
+                    <div class="module-icon">🛍️</div>
+                    <h2>二手市场</h2>
+                    <p>买卖二手物品，物尽其用</p>
+                </div>
+
+                <!-- 快递代领模块 -->
+                <div class="module-card" onclick="location.href='pages/express.html'">
+                    <div class="module-icon">📦</div>
+                    <h2>快递代领</h2>
+                    <p>代取快递，互帮互助</p>
+                </div>
+
+                <!-- 消息模块 -->
+                <div class="module-card" onclick="location.href='pages/messages.html'">
+                    <div class="module-icon">💬</div>
+                    <h2>消息</h2>
+                    <p>查看系统通知和私信</p>
+                </div>
+
+                <!-- 个人中心模块 -->
+                <div class="module-card" onclick="location.href='pages/profile.html'">
+                    <div class="module-icon">👤</div>
+                    <h2>个人中心</h2>
+                    <p>管理个人信息和订单</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 消息提示 -->
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 显示用户信息
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                console.log('当前登录用户:', user.username);
+            }
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                showMessage('退出登录成功', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+            }
+        });
+
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html> 
